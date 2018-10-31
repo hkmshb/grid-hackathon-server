@@ -23,3 +23,5 @@ venv/
 .vscode/
 [._]tmp/
 *.log
+
+.env

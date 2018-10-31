@@ -1,5 +1,5 @@
-from grid3_hackserver import __version__
+from grid3_hackserver import get_version
 
 
 def test_version():
-    assert __version__ == '0.1.0'
+    assert get_version() == '0.1.0'
