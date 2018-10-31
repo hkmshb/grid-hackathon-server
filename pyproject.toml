@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "grid3-hackserver"
+version = "0.1.0"
+description = "Proxy server providing RESTful API for querying GRID GeoServer"
+authors = ["Abdul-Hakeem Shaibu <hkmshb@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+
+[tool.poetry.dev-dependencies]
+pytest = "^3.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
