@@ -1,4 +1,5 @@
-import enum
+import os
+from .client import OGCServiceType, GeoServerAPIClient
 
 
 # simple in-memory registry for created services
@@ -48,13 +49,6 @@ def get_services(names=None):
     return [service for service in _SERVICES if not _skip(service)]
 
 
-class OGCServiceType(enum.Enum):
-    """Defines the subset of OGC service types that are proxied from GeoServer.
-    """
-    WFS = 'Web Features Service'
-    WMS = 'Web Map Service'
-
-
 class Service:
     """Contains an API endpoint definition.
 
@@ -79,3 +73,24 @@ class Service:
 
         # add this to list of available servides
         _SERVICES.append(self)
+
+    def get_apiclient(self):
+        propkey = '_gs_apiclient'
+        if not hasattr(self.__class__, propkey):
+            client = GeoServerAPIClient(
+                urlbase= os.getenv('G3H_GEOSERVER_URLBASE'),
+                apikey=os.getenv('G3H_GEOSERVER_AUTHKEY')
+            )
+            setattr(self.__class__, propkey, client)
+        return getattr(self.__class__, propkey)
+
+    def __call__(self, **query_params):
+        urlpath = 'geoserver/{workspace}/ows'.format(workspace=self.workspace)
+        query_params.update({
+            'typeName': '{workspace}:{layer_name}'.format(
+                workspace=self.workspace, layer_name=self.layer_name
+            )
+        })
+        
+        client = self.get_apiclient()
+        return client(urlpath, query_params)

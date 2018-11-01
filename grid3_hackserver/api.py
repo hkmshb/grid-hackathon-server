@@ -18,6 +18,9 @@ def root_endpoint():
 
 @apibl.route('/<resource_name>/', methods=['GET'])
 def get_resources(resource_name):
-    return {
-        'resource_name': resource_name
-    }
+    services = get_services(resource_name)
+    if not services:
+        raise Exception('404 Not Found')
+
+    test_qs = {'maxFeatures': 1}
+    return services[0](**test_qs)
