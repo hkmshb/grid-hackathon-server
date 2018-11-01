@@ -22,5 +22,7 @@ def get_resources(resource_name):
     if not services:
         raise Exception('404 Not Found')
 
+    # NOTE: test_qs is being used pending when
+    # pagination is implemented ...
     test_qs = {'maxFeatures': 1}
     return services[0](**test_qs)
