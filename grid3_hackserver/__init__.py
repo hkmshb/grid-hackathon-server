@@ -18,6 +18,9 @@ def create_app(script_info=None):
     app_settings = os.getenv('APP_SETTINGS', default_app_setting)
     app.config.from_object(app_settings)
 
+    # register all service endpoints
+    from . import resource
+
     # register blueprints
     from .api import api_blueprint
     app.register_blueprint(api_blueprint)
