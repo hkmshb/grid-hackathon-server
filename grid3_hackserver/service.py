@@ -1,5 +1,4 @@
-import os
-from .client import OGCServiceType, GeoServerAPIClient
+from .common import OGCServiceType, GeoServerAPIClient, config
 
 
 # simple in-memory registry for created services
@@ -78,8 +77,8 @@ class Service:
         propkey = '_gs_apiclient'
         if not hasattr(self.__class__, propkey):
             client = GeoServerAPIClient(
-                urlbase= os.getenv('G3H_GEOSERVER_URLBASE'),
-                apikey=os.getenv('G3H_GEOSERVER_AUTHKEY')
+                urlbase= config.GEOSERVER_URLBASE,
+                apikey=config.GEOSERVER_AUTHKEY
             )
             setattr(self.__class__, propkey, client)
         return getattr(self.__class__, propkey)

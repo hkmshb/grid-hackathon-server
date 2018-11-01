@@ -3,6 +3,10 @@ import json
 import requests
 from furl import furl
 
+# singleton instance ref; this is set when the flask
+# app is being created in grid3_hackserver.create_app
+config = None
+
 
 class OGCServiceType(enum.Enum):
     """Defines the subset of OGC service types that are proxied from GeoServer.
