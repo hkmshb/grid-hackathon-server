@@ -5,11 +5,43 @@ import enum
 _SERVICES = []
 
 
+def resource(name=None, **kwargs):
+    """Class decorator to declare resource endpoints.
+
+    Sample usage:
+
+        @resource('schools', layer_name='sv_fc_poi_school')
+    """
+    def wrapper(cls):
+        kwargs.setdefault('name', name)
+        return add_resource(cls, **kwargs)
+    return wrapper
+
+
+def add_resource(cls, **kwargs):
+    """Function to create a service for a resource endpoint.
+    """
+    service_name = kwargs.pop('name', None)
+    if not service_name:
+        service_name = cls.__name__.lower().replace('resource', '')
+
+    service = Service(name=service_name, **kwargs)
+    setattr(cls, '_service', service)
+    return cls
+
+
 def clear_services():
+    """Clears in-memory registered services.
+    """
     _SERVICES[:] = []
 
 
 def get_services(names=None):
+    """Returns a list of registered services.
+
+    Limits returned services to those named otherwise all registered services
+    are returned.
+    """
     def _skip(service):
         return names is not None and service.name not in names
     
