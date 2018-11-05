@@ -1,5 +1,7 @@
 import os
+from werkzeug.utils import import_string
 from flask_api import FlaskAPI
+from . import common
 
 
 def get_version():
@@ -16,7 +18,12 @@ def create_app(script_info=None):
 
     default_app_setting = 'grid3_hackserver.config.DevConfig'
     app_settings = os.getenv('APP_SETTINGS', default_app_setting)
-    app.config.from_object(app_settings)
+
+    common.config = import_string(app_settings)
+    app.config.from_object(common.config)
+
+    # register all service endpoints
+    from . import resource
 
     # register blueprints
     from .api import api_blueprint
