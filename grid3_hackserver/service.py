@@ -90,6 +90,6 @@ class Service:
                 workspace=self.workspace, layer_name=self.layer_name
             )
         })
-        
+
         client = self.get_apiclient()
         return client(urlpath, query_params)
