@@ -5,8 +5,9 @@ set -e
 show_help() {
   echo """
   Commands
-  start_dev     : start application server
+  start         : start application server
   bash          : start bash shell
+  manage        : run a flask management command
   """
 }
 
