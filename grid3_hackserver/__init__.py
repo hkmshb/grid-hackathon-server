@@ -18,6 +18,7 @@ def create_app(script_info=None):
     app = FlaskAPI(__name__)
     app.config['SWAGGER'] = {
         'title': 'Grid Hackathon',
+        'specs_route': '/docs',
         'uiversion': 3
     }
     swagger = Swagger(app)
