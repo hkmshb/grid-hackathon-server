@@ -1,6 +1,7 @@
 import os
 from werkzeug.utils import import_string
 from flask_api import FlaskAPI
+from flasgger import Swagger
 from . import common
 
 
@@ -15,6 +16,11 @@ def get_version():
 def create_app(script_info=None):
     # create app & set config
     app = FlaskAPI(__name__)
+    app.config['SWAGGER'] = {
+        'title': 'Grid Hackathon',
+        'uiversion': 3
+    }
+    swagger = Swagger(app)
 
     default_app_setting = 'grid3_hackserver.config.DevConfig'
     app_settings = os.getenv('APP_SETTINGS', default_app_setting)

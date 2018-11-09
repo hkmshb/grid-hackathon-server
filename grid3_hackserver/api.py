@@ -1,6 +1,7 @@
 from urllib.parse import urljoin
 from flask import request, Blueprint
 from .service import get_services
+from .swagger import add_resources_doc
 from .common import GRIDError, as_int, build_gsparams, include_paging_details
 
 
@@ -30,6 +31,7 @@ def sink_request():
 
 
 @apibl.route('/<resource_name>/', methods=['GET'])
+@add_resources_doc
 def get_resources(resource_name):
     services = get_services(resource_name)
     if not services:

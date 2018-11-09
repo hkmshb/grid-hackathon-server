@@ -1,0 +1,16 @@
+version: '3'
+services:
+  web:
+    build: .
+    command: start
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      APP_NAME: grid3-hackserver
+      APP_SETTINGS: grid3_hackserver.config.DevConfig
+      FLASK_ENV: development
+      TESTING: 'false'
+      G3H_GEOSERVER_URLBASE: ${G3H_GEOSERVER_URLBASE}
+      G3H_GEOSERVER_AUTHKEY: ${G3H_GEOSERVER_AUTHKEY}

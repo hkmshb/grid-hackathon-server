@@ -1,8 +1,23 @@
+from collections import namedtuple
 from .common import OGCServiceType, GeoServerAPIClient, config
 
 
 # simple in-memory registry for created services
 _SERVICES = []
+# key-value pair of resources and the model doc
+_MODELS = {}
+
+
+def model(model, example):
+    def wrapper(cls):
+        Model = namedtuple('Model', ['model', 'example'])
+        _MODELS[cls._service.name] = Model(model=model, example=example)
+        return cls
+    return wrapper
+
+
+def get_models():
+    return _MODELS
 
 
 def resource(name=None, **kwargs):
@@ -44,7 +59,7 @@ def get_services(names=None):
     """
     def _skip(service):
         return names is not None and service.name not in names
-    
+
     return [service for service in _SERVICES if not _skip(service)]
 
 
@@ -77,7 +92,7 @@ class Service:
         propkey = '_gs_apiclient'
         if not hasattr(self.__class__, propkey):
             client = GeoServerAPIClient(
-                urlbase= config.GEOSERVER_URLBASE,
+                urlbase=config.GEOSERVER_URLBASE,
                 apikey=config.GEOSERVER_AUTHKEY
             )
             setattr(self.__class__, propkey, client)
