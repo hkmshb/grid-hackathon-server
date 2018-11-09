@@ -1,6 +1,7 @@
 from urllib.parse import urljoin
 from flask import request, Blueprint
 from .service import get_services
+from .swagger import add_resources_doc
 
 
 api_blueprint = apibl = Blueprint('', __name__)
@@ -17,6 +18,7 @@ def root_endpoint():
 
 
 @apibl.route('/<resource_name>/', methods=['GET'])
+@add_resources_doc
 def get_resources(resource_name):
     services = get_services(resource_name)
     if not services:
