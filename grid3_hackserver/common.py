@@ -28,7 +28,7 @@ def build_gsparams(reqparams):
     gsparams = {}
 
     # handling pagination; disable when size less than 1
-    can_paginate = as_bool(config.ENABLE_PAGINATION, False)
+    can_paginate = as_bool(config.PAGINATION_ENABLED, False)
     if can_paginate:
         size = as_int(reqparams.pop('size', ''), config.DEFAULT_PAGESIZE)
         if size > 0:
@@ -57,7 +57,7 @@ def include_paging_details(gsparams, resultset):
     :param gsparams: parameters used by GeoServer to generate resultset.
     :param resultset: response returned by GeoServer for gsparams.
     """
-    can_paginate = as_bool(config.ENABLE_PAGINATION, False)
+    can_paginate = as_bool(config.PAGINATION_ENABLED, False)
     if not can_paginate:
         return resultset
 

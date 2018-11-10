@@ -12,6 +12,7 @@ flask-cli = "^0.4.0"
 furl = "^2.0"
 requests = "^2.20"
 flasgger = "^0.9.1"
+flask-limiter = "^1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"

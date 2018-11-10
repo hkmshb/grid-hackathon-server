@@ -1,5 +1,7 @@
 import os
 from werkzeug.utils import import_string
+from flask_limiter.util import get_remote_address
+from flask_limiter import Limiter
 from flask_api import FlaskAPI
 from flasgger import Swagger
 from . import common
@@ -33,7 +35,11 @@ def create_app(script_info=None):
     from . import resource
 
     # register blueprints
-    from .api import api_blueprint
+    from .api import api_blueprint, root_endpoint
     app.register_blueprint(api_blueprint)
+
+    # configure rate limiting
+    limiter = Limiter(app, key_func=get_remote_address)
+    limiter.exempt(root_endpoint)
 
     return app
