@@ -42,4 +42,23 @@ def create_app(script_info=None):
     limiter = Limiter(app, key_func=get_remote_address)
     limiter.exempt(root_endpoint)
 
+    configure_errorhandlers(app)
     return app
+
+
+def configure_errorhandlers(app):
+    from flask import jsonify, make_response
+
+    @app.errorhandler(429)
+    def ratelimit_handler(e):
+        return make_response(
+            jsonify(error="Ratelimit exceeded. {}".format(e)),
+            429
+        )
+
+    @app.errorhandler(404)
+    def resource_not_found(e):
+        return make_response(
+            jsonify(error="Resource not found. {}".format(e)),
+            404
+        )

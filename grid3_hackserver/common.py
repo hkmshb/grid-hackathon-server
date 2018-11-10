@@ -1,18 +1,20 @@
 import enum
 import json
 import requests
-from furl import furl
-from flask import request
-from .config import as_bool, as_int
 from collections import namedtuple
 
+from furl import furl
+from flask import request
+from flask_api.exceptions import APIException
+
+from .config import as_bool, as_int
 
 # singleton instance ref; this is set when the flask
 # app is being created in grid3_hackserver.create_app
 config = None
 
 
-class GRIDError(Exception):
+class GRIDError(APIException):
     """Base exception for all GRID related errors.
     """
     pass
