@@ -1,5 +1,6 @@
 import enum
 import json
+import logging
 import requests
 from collections import namedtuple
 
@@ -12,6 +13,8 @@ from .config import as_bool, as_int
 # singleton instance ref; this is set when the flask
 # app is being created in grid3_hackserver.create_app
 config = None
+
+logger = logging.getLogger(__name__)
 
 
 class GRIDError(APIException):
@@ -93,6 +96,32 @@ def include_paging_details(gsparams, resultset):
         pager['next'] = next_furl.url
 
 
+def extract_errorinfo(xmlval):
+    """Extract and return error text from xml value.
+    """
+    import re
+    from xml.etree import ElementTree
+
+    root = ElementTree.fromstring(xmlval)
+    namespaces = {'ows': 'http://www.opengis.net/ows/1.1'}
+
+    exc_elem = root.find('ows:Exception/ows:ExceptionText', namespaces)
+    if exc_elem is None:
+        errmsg = 'Unknown server error occured due to invalid request.'
+        logger.error(
+            errmsg + ' Unrecognized non-JSON GeoServer response provided: %s',
+            xmlval
+        )
+        return (errmsg, 500)
+
+    # mask geoserver layer info
+    exc_text = exc_elem.text
+    match = re.findall('GRID\w+:\w+', exc_text)
+    for m in match:
+        exc_text = exc_text.replace(m, '***')
+    return (exc_text, 400)
+
+
 class OGCServiceType(enum.Enum):
     """Defines the subset of OGC service types that are proxied from GeoServer.
     """
@@ -139,9 +168,7 @@ class APIClient:
             request_url = self._build_url(urlpath)
             resp = request.post(furlobj.url, headers=request_headers,
                                 data=json.dumps(payload))
-
-        resp.raise_for_status()
-        return resp.json()
+        return resp
 
     def __repr__(self):
         """Returns a string representation for instances.

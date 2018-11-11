@@ -52,13 +52,13 @@ def configure_errorhandlers(app):
     @app.errorhandler(429)
     def ratelimit_handler(e):
         return make_response(
-            jsonify(error="Ratelimit exceeded. {}".format(e)),
+            jsonify(message="Ratelimit exceeded. {}".format(e)),
             429
         )
 
     @app.errorhandler(404)
     def resource_not_found(e):
         return make_response(
-            jsonify(error="Resource not found. {}".format(e)),
+            jsonify(message="Resource not found. {}".format(e)),
             404
         )
