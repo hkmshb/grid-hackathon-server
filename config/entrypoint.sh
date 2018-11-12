@@ -13,7 +13,11 @@ show_help() {
 
 case "$1" in
   start )
-    cd /app
+    aws s3 cp --sse AES256 s3://ecs-secrets-$ENV/$PROJECT - > ~/.env
+    source ~/.env
+    /usr/local/bin/uwsgi --ini /app/config/uwsgi.ini
+  ;;
+  start_dev )
     /usr/local/bin/uwsgi --ini /app/config/uwsgi.ini
   ;;
   bash )

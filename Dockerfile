@@ -7,7 +7,7 @@ WORKDIR /app
 ADD . /app
 ADD config/entrypoint.sh /tmp/entrypoint.sh
 RUN chmod +x /tmp/entrypoint.sh
-RUN pip install poetry
+RUN pip install poetry awscli
 RUN poetry config settings.virtualenvs.create false
 RUN poetry install
 EXPOSE 5000

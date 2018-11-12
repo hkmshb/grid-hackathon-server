@@ -11,6 +11,10 @@ services:
 install:
   - pip install awscli ecs-deploy
 
-deploy:
+script:
+  - ./scripts/run_tests.sh
+
+after_success:
   - ./scripts/deploy.sh
+
 

@@ -1,14 +1,14 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 export AWS_DEFAULT_REGION="eu-west-1"
 export IMAGE_REPO="387526361725.dkr.ecr.eu-west-1.amazonaws.com"
 export APP="grid3-hackserver-api"
 
-$(aws ecr get-login --region="${AWS_DEFAULT_REGION}" --no-include-email)
 
-if [ "${TRAVIS_BRANCH}" == "master" ] && [ "${TRAVIS_PULL_REQUEST}" == "false" ]; then
+if [ "${TRAVIS_BRANCH}" == "conf/deployment" ] && [ "${TRAVIS_PULL_REQUEST}" == "false" ]; then
+  $(aws ecr get-login --region="${AWS_DEFAULT_REGION}" --no-include-email)
   export ENV="prod"
 fi
 

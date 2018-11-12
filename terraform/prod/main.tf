@@ -3,7 +3,6 @@ module "ecs" {
   environment           = "${var.environment}"
   project               = "${var.project}"
   app                   = "api"
-  data_dir              = "/app"
   database_hostname     = "not_required"
   application_memory    = 4096
   memory_reservation    = 1024
