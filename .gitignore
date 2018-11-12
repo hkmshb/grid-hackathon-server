@@ -25,3 +25,7 @@ venv/
 *.log
 
 .env
+hackserver
+.terraform
+terraform.tfstate
+terraform.tfstate.backup

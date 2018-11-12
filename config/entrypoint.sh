@@ -13,8 +13,7 @@ show_help() {
 
 case "$1" in
   start)
-    cd /app
-    python manage.py run -h 0.0.0.0
+    /usr/local/bin/uwsgi --ini ./conf/uwsgi.ini
   ;;
   bash )
     /bin/bash
