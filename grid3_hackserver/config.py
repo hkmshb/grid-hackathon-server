@@ -47,8 +47,12 @@ class BaseConfig:
     APP_NAME = os.getenv('APP_NAME', 'grid3-hackserver')
     GEOSERVER_URLBASE = getenv('G3H_GEOSERVER_URLBASE')
     GEOSERVER_AUTHKEY = getenv('G3H_GEOSERVER_AUTHKEY')
-    ENABLE_PAGINATION = as_bool(getenv('G3H_ENABLE_PAGINATION'), False)
-    DEFAULT_PAGESIZE  = as_int(getenv('G3H_DEFAULT_PAGESIZE'), 500)
+    PAGINATION_ENABLED = as_bool(getenv('G3H_PAGINATION_ENABLED'), False)
+    DEFAULT_PAGESIZE = as_int(getenv('G3H_DEFAULT_PAGESIZE'), 500)
+
+    # rate limit configs
+    RATELIMIT_ENABLED = as_bool(getenv('G3H_RATELIMIT_ENABLED'), True)
+    RATELIMIT_DEFAULT = getenv('G3H_RATELIMIT_DEFAULT')
 
 
 class DevConfig(BaseConfig):

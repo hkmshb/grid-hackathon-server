@@ -1,18 +1,23 @@
 import enum
 import json
+import logging
 import requests
-from furl import furl
-from flask import request
-from .config import as_bool, as_int
 from collections import namedtuple
 
+from furl import furl
+from flask import request
+from flask_api.exceptions import APIException
+
+from .config import as_bool, as_int
 
 # singleton instance ref; this is set when the flask
 # app is being created in grid3_hackserver.create_app
 config = None
 
+logger = logging.getLogger(__name__)
 
-class GRIDError(Exception):
+
+class GRIDError(APIException):
     """Base exception for all GRID related errors.
     """
     pass
@@ -28,7 +33,7 @@ def build_gsparams(reqparams):
     gsparams = {}
 
     # handling pagination; disable when size less than 1
-    can_paginate = as_bool(config.ENABLE_PAGINATION, False)
+    can_paginate = as_bool(config.PAGINATION_ENABLED, False)
     if can_paginate:
         size = as_int(reqparams.pop('size', ''), config.DEFAULT_PAGESIZE)
         if size > 0:
@@ -57,7 +62,7 @@ def include_paging_details(gsparams, resultset):
     :param gsparams: parameters used by GeoServer to generate resultset.
     :param resultset: response returned by GeoServer for gsparams.
     """
-    can_paginate = as_bool(config.ENABLE_PAGINATION, False)
+    can_paginate = as_bool(config.PAGINATION_ENABLED, False)
     if not can_paginate:
         return resultset
 
@@ -89,6 +94,32 @@ def include_paging_details(gsparams, resultset):
         pager['prev'] = prev_furl.url
     if page < next_page:
         pager['next'] = next_furl.url
+
+
+def extract_errorinfo(xmlval):
+    """Extract and return error text from xml value.
+    """
+    import re
+    from xml.etree import ElementTree
+
+    root = ElementTree.fromstring(xmlval)
+    namespaces = {'ows': 'http://www.opengis.net/ows/1.1'}
+
+    exc_elem = root.find('ows:Exception/ows:ExceptionText', namespaces)
+    if exc_elem is None:
+        errmsg = 'Unknown server error occured due to invalid request.'
+        logger.error(
+            errmsg + ' Unrecognized non-JSON GeoServer response provided: %s',
+            xmlval
+        )
+        return (errmsg, 500)
+
+    # mask geoserver layer info
+    exc_text = exc_elem.text
+    match = re.findall('GRID\w+:\w+', exc_text)
+    for m in match:
+        exc_text = exc_text.replace(m, '***')
+    return (exc_text, 400)
 
 
 class OGCServiceType(enum.Enum):
@@ -137,9 +168,7 @@ class APIClient:
             request_url = self._build_url(urlpath)
             resp = request.post(furlobj.url, headers=request_headers,
                                 data=json.dumps(payload))
-
-        resp.raise_for_status()
-        return resp.json()
+        return resp
 
     def __repr__(self):
         """Returns a string representation for instances.

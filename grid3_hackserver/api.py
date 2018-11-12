@@ -1,17 +1,23 @@
+import json
 from urllib.parse import urljoin
 from flask import request, Blueprint
+from flask_api.exceptions import NotFound, ParseError
+
 from .service import get_services
 from .swagger import add_resources_doc
-from .common import GRIDError, as_int, build_gsparams, include_paging_details
+from .common import (
+    GRIDError, as_int, build_gsparams, include_paging_details,
+    extract_errorinfo
+)
 
 
 api_blueprint = apibl = Blueprint('', __name__)
 
 
-class InvalidResourceError(GRIDError):
-    """Exception thrown resources unknown to the server.
+class ServerError(GRIDError):
+    """Exception thrown for server related error.
     """
-    pass
+    status_code = 500
 
 
 @apibl.route('/', methods=['GET'])
@@ -36,10 +42,19 @@ def get_resources(resource_name):
     services = get_services(resource_name)
     if not services:
         msgfmt = 'Unknown resource requested: {}'
-        raise InvalidResourceError(msgfmt.format(resource_name))
+        raise NotFound(detail=msgfmt.format(resource_name))
 
     gsparams = build_gsparams(request.args.copy())
-    resultset = services[0](**gsparams)
+    resp = services[0](**gsparams)
+
+    try:
+        resp.raise_for_status()
+        resultset = resp.json()
+    except json.decoder.JSONDecodeError:
+        errmsg, status_code = extract_errorinfo(resp.text)
+        if status_code >= 500:
+            raise ServerError(detail=errmsg)
+        raise ParseError(detail=errmsg)
 
     include_paging_details(gsparams, resultset)
     return resultset
