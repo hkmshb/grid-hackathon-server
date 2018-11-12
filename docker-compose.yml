@@ -9,9 +9,9 @@ services:
       - .:/app
     environment:
       APP_NAME: grid3-hackserver
-      APP_SETTINGS: grid3_hackserver.config.DevConfig
-      FLASK_ENV: development
-      TESTING: 'false'
+      APP_SETTINGS: ${APP_SETTINGS}
+      FLASK_ENV: ${FLASK_ENV}
+      TESTING: ${TESTING}
       G3H_GEOSERVER_URLBASE: ${G3H_GEOSERVER_URLBASE}
       G3H_GEOSERVER_AUTHKEY: ${G3H_GEOSERVER_AUTHKEY}
       G3H_PAGINATION_ENABLED: ${G3H_PAGINATION_ENABLED}
