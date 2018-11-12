@@ -12,18 +12,18 @@ show_help() {
 }
 
 case "$1" in
-  start)
+  start )
     cd /app
-    python manage.py run -h 0.0.0.0
+    /usr/local/bin/uwsgi --ini /app/config/uwsgi.ini
   ;;
   bash )
     /bin/bash
   ;;
-  manage)
+  manage )
   cd /app
     python manage.py "${@:2}"
   ;;
-  *)
+  * )
     show_help
   ;;
 esac
