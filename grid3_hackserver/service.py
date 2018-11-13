@@ -11,7 +11,7 @@ _MODELS = {}
 def model(model, example):
     def wrapper(cls):
         Model = namedtuple('Model', ['model', 'example'])
-        _MODELS[cls._service.name] = Model(model=model, example=example)
+        _MODELS[cls._service.name] = Model(model=model.replace('\n', '\n\t\t'), example=example)
         return cls
     return wrapper
 
@@ -59,7 +59,6 @@ def get_services(names=None):
     """
     def _skip(service):
         return names is not None and service.name not in names
-
     return [service for service in _SERVICES if not _skip(service)]
 
 
