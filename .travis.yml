@@ -1,0 +1,20 @@
+language: python
+
+python:
+  - '2.7'
+
+sudo: required
+
+services:
+  - docker
+
+install:
+  - pip install awscli ecs-deploy
+
+script:
+  - ./scripts/run_tests.sh
+
+after_success:
+  - ./scripts/deploy.sh
+
+
