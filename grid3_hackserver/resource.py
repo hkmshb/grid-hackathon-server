@@ -240,6 +240,9 @@ properties:
 	cce_global:
 		type: int
 		description: Global Unique Identifier for the Cold chain facility
+	global_id:
+		type: int
+		description: Global Unique Identifier for the Cold chain facility
 	cce_last_updated:
 		type: string
 		description: Date that the information on the CCE was updated by the state or assigned body/partner
@@ -384,7 +387,7 @@ properties:
                 "next": "http://localhost:5000/cold-chain-facilities/?size=1&page=2"
             }
            }""")
-@resource('cold-chain-facilities', layer_name='fc_cold_chain_facility')
+@resource('cold-chain-facilities', layer_name='sv_fc_cold_chain_facility')
 class ColdChainFacilityResource:
     pass
 
@@ -396,7 +399,7 @@ properties:
 	geometrytype:
 		type: string
 		description: the structure of spatial objects in terms of points, lines, polygons, polylines
-	globalid:
+	global_id:
 		type: int
 		description: Global Unique Identifier for the dataset
 	latitude:
@@ -445,7 +448,7 @@ properties:
                     "geometrytype": "POINT",
                     "latitude": 5.126542229440718,
                     "longitude": 7.3618733545185,
-                    "globalid": "404db9d5-6041-45f7-bb2a-57f96e20cad4",
+                    "global_id": "404db9d5-6041-45f7-bb2a-57f96e20cad4",
                     "poi_name": "Abia States Signage And Advertisement Agency",
                     "alt_name": null,
                     "wardcode": "ABSEZA04",
@@ -1293,7 +1296,7 @@ properties:
 	editor:
 		type: string
 		description: Name of the editor 
-	globalid:
+	global_id:
 		type: int
 		description: Global Unique Identifier for the dataset
 	id:
@@ -1337,7 +1340,7 @@ properties:
                     "source": "GRID",
                     "editor": "Racheal.Olarewaju",
                     "secondary_editor": null,
-                    "globalid": "ff377abc-384f-4f64-98ab-a672332ac9e5"
+                    "global_id": "ff377abc-384f-4f64-98ab-a672332ac9e5"
                 }
                 }
             ],
@@ -1351,7 +1354,7 @@ properties:
                 "next": "http://localhost:5000/post-offices/?size=1&page=2"
             }
            }""")
-@resource('dump-sites', layer_name='fc_poi_dump_site')
+@resource('dump-sites', layer_name='sv_fc_poi_dump_site')
 class DumpSiteResource:
     pass
 
@@ -2509,7 +2512,7 @@ class BuiltupAreaResource:
 
 @model("""type: object
 properties:
-    globalid:
+    global_id:
 		type: int
 		description: Global Unique Identifier for the dataset
 	id:
@@ -2565,7 +2568,7 @@ properties:
                     "name": null,
                     "source": "",
                     "timestamp": "2012-08-01T18:16:19Z",
-                    "globalid": "de8778ee-c8b9-4f40-a65f-1cfc21e718c3",
+                    "global_id": "de8778ee-c8b9-4f40-a65f-1cfc21e718c3",
                     "id": 3
                 }
                 }
@@ -2580,14 +2583,14 @@ properties:
                 "next": "http://localhost:5000/builtup-areas/?size=1&page=2"
             }
            }""")
-@resource('major-roads', layer_name='fe_roads_major')
+@resource('major-roads', layer_name='sv_fe_roads_major')
 class MajorRoadResource:
     pass
 
 
 @model("""type: object
 properties:
-    globalid:
+    global_id:
 		type: int
 		description: Global Unique Identifier for the dataset
 	id:
@@ -2643,7 +2646,7 @@ properties:
                     "name": null,
                     "source": "",
                     "timestamp": "2012-08-01T18:16:19Z",
-                    "globalid": "de8778ee-c8b9-4f40-a65f-1cfc21e718c3",
+                    "global_id": "de8778ee-c8b9-4f40-a65f-1cfc21e718c3",
                     "id": 3
                 }
                 }
@@ -2658,14 +2661,14 @@ properties:
                 "next": "http://localhost:5000/builtup-areas/?size=1&page=2"
             }
            }""")
-@resource('tertiary-roads', layer_name='fe_roads_tertiary')
+@resource('tertiary-roads', layer_name='sv_fe_roads_tertiary')
 class TertiaryRoadResource:
     pass
 
 
 @model("""type: object
 properties:
-    globalid:
+    global_id:
 		type: int
 		description: Global Unique Identifier for the dataset
 	id:
@@ -2721,7 +2724,7 @@ properties:
                     "name": null,
                     "source": "",
                     "timestamp": "2012-08-01T18:16:19Z",
-                    "globalid": "de8778ee-c8b9-4f40-a65f-1cfc21e718c3",
+                    "global_id": "de8778ee-c8b9-4f40-a65f-1cfc21e718c3",
                     "id": 3
                 }
                 }
@@ -2736,14 +2739,14 @@ properties:
                 "next": "http://localhost:5000/builtup-areas/?size=1&page=2"
             }
            }""")
-@resource('residential-roads', layer_name='fe_roads_residential')
+@resource('residential-roads', layer_name='sv_fe_roads_residential')
 class ResidentialRoadResource:
     pass
 
 
 @model("""type: object
 properties:
-    globalid:
+    global_id:
 		type: int
 		description: Global Unique Identifier for the dataset
 	id:
@@ -2799,7 +2802,7 @@ properties:
                     "name": null,
                     "source": "",
                     "timestamp": "2012-08-01T18:16:19Z",
-                    "globalid": "de8778ee-c8b9-4f40-a65f-1cfc21e718c3",
+                    "global_id": "de8778ee-c8b9-4f40-a65f-1cfc21e718c3",
                     "id": 3
                 }
                 }
@@ -2814,7 +2817,7 @@ properties:
                 "next": "http://localhost:5000/builtup-areas/?size=1&page=2"
             }
            }""")
-@resource('track-roads', layer_name='fe_roads_track')
+@resource('track-roads', layer_name='sv_fe_roads_track')
 class TrackRoadResource:
     pass
 
