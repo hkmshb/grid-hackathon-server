@@ -1,4 +1,5 @@
 import os
+import logging
 from werkzeug.utils import import_string
 from flask_limiter.util import get_remote_address
 from flask_limiter import Limiter
@@ -16,6 +17,8 @@ def get_version():
 
 
 def create_app(script_info=None):
+    configure_logging()
+
     # create app & set config
     app = FlaskAPI(__name__)
     app.config['SWAGGER'] = {
@@ -50,6 +53,15 @@ def create_app(script_info=None):
 
     configure_errorhandlers(app)
     return app
+
+
+def configure_logging():
+    """Configures the logging for the app.
+    """
+    logging.basicConfig(
+        level=os.environ.get('G3H_LOGGING_LEVEL', logging.INFO),
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
 
 
 def configure_errorhandlers(app):

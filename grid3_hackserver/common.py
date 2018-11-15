@@ -238,12 +238,12 @@ class APIClient:
 
         if as_get:
             furlobj = self._build_url(urlpath, **payload)
-            logger.debug(f"proxy target: {furlobj.url}")
+            logger.info(f"proxy target: {furlobj.url}")
             resp = requests.get(furlobj.url, headers=request_headers)
         else:
             payload = payload or {}
             request_url = self._build_url(urlpath)
-            logger.debug(f"proxy target: {furlobj.url}")
+            logger.info(f"proxy target: {furlobj.url}")
             resp = request.post(furlobj.url, headers=request_headers,
                                 data=json.dumps(payload))
         return resp
