@@ -42,6 +42,12 @@ def create_app(script_info=None):
     limiter = Limiter(app, key_func=get_remote_address)
     limiter.exempt(root_endpoint)
 
+    # alter some settings if production env
+    if not common.config.DEBUG:
+        app.config['DEFAULT_RENDERERS'] = [
+            'flask_api.renderers.JSONRenderer'
+        ]
+
     configure_errorhandlers(app)
     return app
 
