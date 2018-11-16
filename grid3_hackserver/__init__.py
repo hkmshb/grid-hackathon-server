@@ -9,8 +9,8 @@ from . import common
 
 
 def get_version():
-    '''Retrieve and return version details.
-    '''
+    """Retrieve and return version details.
+    """
     import pkg_resources
     package = pkg_resources.require('grid3_hackserver')
     return package[0].version
@@ -56,7 +56,7 @@ def create_app(script_info=None):
 
 
 def configure_logging():
-    """Configures the logging for the app.
+    """Configures logging for the app.
     """
     logging.basicConfig(
         level=os.environ.get('G3H_LOGGING_LEVEL', logging.INFO),
@@ -65,6 +65,8 @@ def configure_logging():
 
 
 def configure_errorhandlers(app):
+    """Configures error handlers for the app.
+    """
     from flask import jsonify, make_response
 
     @app.errorhandler(429)
