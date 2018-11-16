@@ -1,4 +1,5 @@
 import os
+import logging
 from werkzeug.utils import import_string
 from flask_limiter.util import get_remote_address
 from flask_limiter import Limiter
@@ -8,14 +9,16 @@ from . import common
 
 
 def get_version():
-    '''Retrieve and return version details.
-    '''
+    """Retrieve and return version details.
+    """
     import pkg_resources
     package = pkg_resources.require('grid3_hackserver')
     return package[0].version
 
 
 def create_app(script_info=None):
+    configure_logging()
+
     # create app & set config
     app = FlaskAPI(__name__)
     app.config['SWAGGER'] = {
@@ -42,11 +45,28 @@ def create_app(script_info=None):
     limiter = Limiter(app, key_func=get_remote_address)
     limiter.exempt(root_endpoint)
 
+    # alter some settings if production env
+    if not common.config.DEBUG:
+        app.config['DEFAULT_RENDERERS'] = [
+            'flask_api.renderers.JSONRenderer'
+        ]
+
     configure_errorhandlers(app)
     return app
 
 
+def configure_logging():
+    """Configures logging for the app.
+    """
+    logging.basicConfig(
+        level=os.environ.get('G3H_LOGGING_LEVEL', logging.INFO),
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+
+
 def configure_errorhandlers(app):
+    """Configures error handlers for the app.
+    """
     from flask import jsonify, make_response
 
     @app.errorhandler(429)

@@ -23,6 +23,76 @@ class GRIDError(APIException):
     pass
 
 
+class CQLBuilder:
+    OP_MARKER = '__'
+    CMP_OPERATORS = ('lt', 'le', 'gt', 'ge')
+    ALL_OPERATORS = CMP_OPERATORS + ('like', 'ilike', 'in', 'between')
+
+    def __init__(self):
+        pass
+
+    def __call__(self, reqparams):
+        conditions = []
+        for (expr, val) in reqparams.items():
+            if self.OP_MARKER in expr:
+                cql_cond = self._parse_expr_complex(expr, val)
+            else:
+                cql_cond = self._parse_expr_simple(expr, val)
+            conditions.append(cql_cond)
+        return ' AND '.join(conditions)
+
+    def _build_cmp_expr(self, field, op, value):
+        cond_fmt = '{field} {op} {value}'
+        kw = {'field': field, 'value': value, 'op': None}
+        if op == 'lt':
+            kw['op'] = '<'
+        elif op == 'le':
+            kw['op'] = '<='
+        elif op == 'gt':
+            kw['op'] = '>'
+        elif op == 'ge':
+            kw['op'] = '>='
+        return cond_fmt.format(**kw)
+
+    def _build_term_expr(self, field, op, value):
+        if 'like' in op:
+            cond = '{field} {op} {value}'.format(
+                field=field, op=op.upper(), value=value
+            )
+        elif op == 'in':
+            values = [v.strip() for v in value.split(',')]
+            value = '({})'.format(', '.join(values))
+            cond = '{field} IN {value}'.format(field=field, value=value)
+        elif op == 'between':
+            values = [v.strip() for v in value.split(',')]
+            if len(values) != 2:
+                errmsg = "Invalid 'BETWEEN' query expression: {}"
+                raise GRIDError(errmsg.format(field + '__' + op + '=' + value))
+
+            cond = '{field} BETWEEN {lt} AND {rt}'.format(
+                field=field, lt=values[0], rt=values[1]
+            )
+        return cond
+
+    def _parse_expr_simple(self, expr, value):
+        return "{} = {}".format(expr, value)
+
+    def _parse_expr_complex(self, expr, value):
+        field, op = expr.split(self.OP_MARKER)
+        if op not in self.ALL_OPERATORS:
+            raise GRIDError('Invalid query expression')
+
+        return (
+            self._build_cmp_expr(field, op, value)
+            if op in self.CMP_OPERATORS else
+                self._build_term_expr(field, op, value)
+        )
+
+
+# singleton instance 
+cql_builder = CQLBuilder()
+
+
 def build_gsparams(reqparams):
     """Transforms query params as understood by the proxy server to one
     understood by GeoServer.
@@ -51,8 +121,14 @@ def build_gsparams(reqparams):
     if fields:
         gsparams.update({'propertyName': fields})
 
-    # apply left-over reqparams as is
-    gsparams.update(reqparams)
+    # extract and use cql query arg if present and pass through as is
+    # or build from whatever args are left over in 'reqparams'
+    cql = reqparams.pop('cql', None)
+    if not cql:
+        cql = cql_builder(reqparams)
+
+    if cql:
+        gsparams.update({'cql_filter': cql})
     return gsparams
 
 
@@ -162,10 +238,12 @@ class APIClient:
 
         if as_get:
             furlobj = self._build_url(urlpath, **payload)
+            logger.info(f"proxy target: {furlobj.url}")
             resp = requests.get(furlobj.url, headers=request_headers)
         else:
             payload = payload or {}
             request_url = self._build_url(urlpath)
+            logger.info(f"proxy target: {furlobj.url}")
             resp = request.post(furlobj.url, headers=request_headers,
                                 data=json.dumps(payload))
         return resp
