@@ -1,5 +1,5 @@
 import json
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 from flask import request, Blueprint, Markup
 from flask_api.exceptions import NotFound, ParseError
 
@@ -7,7 +7,7 @@ from .service import get_services
 from .swagger import add_resources_doc
 from .common import (
     GRIDError, as_int, build_gsparams, include_paging_details,
-    extract_errorinfo
+    extract_errorinfo, config
 )
 
 
@@ -23,6 +23,14 @@ class ServerError(GRIDError):
 @apibl.route('/', methods=['GET'])
 def root_endpoint():
     url_root = request.url_root
+
+    if not config.DEBUG:
+        urlparts = urlparse(url_root)
+        url_root = "{scheme}://{netloc}{path}".format(
+            scheme=urlparts.scheme, path=urlparts.path,
+            netloc=urlparts.netloc.split(':')[0]
+        )
+
     endpoints = {
         service.name: urljoin(url_root, service.name) + '/'
         for service in sorted(get_services(), key=lambda s: s.name)
